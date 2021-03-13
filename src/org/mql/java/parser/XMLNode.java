@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -65,6 +66,15 @@ public class XMLNode {
 		return varNode;
 	}
 
+	public String getAttribute(String name) {
+		NamedNodeMap attributes = node.getAttributes();
+		Node attr = attributes.getNamedItem(name);
+		if (attr == null) {
+			return null;
+		}
+		return attr.getNodeValue();
+	}
+	
 	public String txtValue() {
 		return node.getTextContent();
 	}
@@ -104,5 +114,9 @@ public class XMLNode {
 		}
 		DOMHandler.transformXML(doc, source);
 
+	}
+	
+	public String getNodeName() {
+		return node.getNodeName();
 	}
 }

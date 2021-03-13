@@ -27,7 +27,7 @@
 				<input type="url" class="form-control" placeholder="" name="image">
 			</div>
 			<div class="center">
-				<button class="btn btn-primary" type="submit" name="ajouter">Ajouter</button>
+				<button class="btn btn-primary" type="submit" name="create">Ajouter</button>
 			</div>
 		</form>
 	</div>

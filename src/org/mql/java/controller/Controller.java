@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,8 +19,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.mql.java.dao.ProductXMLDAO;
 import org.mql.java.models.Product;
-
+import org.mql.java.parser.XMLDataLoader;
 import org.mql.java.parser.XMLNode;
 
 @WebServlet(urlPatterns =  "/controller", loadOnStartup = 1)
@@ -28,6 +30,7 @@ public class Controller extends HttpServlet {
 	private String xmlOutput;
 	private String xmlSource;
 	private XMLNode productRoot;
+	private ProductXMLDAO productXMLDAO;
 
 	public Controller() {
 	}
@@ -38,11 +41,14 @@ public class Controller extends HttpServlet {
 		String xslSource = getClass().getResource("/products.xsl").getPath();
 		xmlOutput = processXSL(xmlSource, xslSource);
 		productRoot = new XMLNode(xmlSource);
+		productXMLDAO = new ProductXMLDAO(xmlSource);
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		if (request.getParameter("id") != null) {
+			int requestedProductId = Integer.parseInt(request.getParameter("id"));
+			
 			Product prod = new Product(0, "test", 1.0F, "test", "test");
 			request.setAttribute("id", prod.getId());
 			request.setAttribute("label", prod.getLabel());
@@ -53,13 +59,16 @@ public class Controller extends HttpServlet {
 			request.getRequestDispatcher("modify.jsp").forward(request, response);
 		}
 		
+		XMLDataLoader<Product> productLoader = new XMLDataLoader<>();
+		Vector<Product> products = productLoader.load(xmlSource, Product.class);
+		
 		PrintWriter writer = response.getWriter();
 		writer.write(xmlOutput);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		if (request.getParameter("ajouter") != null) {
+		if (request.getParameter("create") != null) {
 			int id = Integer.parseInt(request.getParameter("id"));
 			String label = request.getParameter("label");
 			float price = Float.parseFloat(request.getParameter("price"));
@@ -68,9 +77,15 @@ public class Controller extends HttpServlet {
 			Product proudct = new Product(id, label, price, brand, image);
 			productRoot.add(proudct);
 		}
-		if (request.getParameter("update") !=null) {
+		
+		if (request.getParameter("update") != null) {
 			
 		}
+		
+		if (request.getParameter("delete") != null) {
+			
+		}
+		
 
 		doGet(request, response);
 
