@@ -18,20 +18,24 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-@WebServlet("/controller")
+@WebServlet(urlPatterns =  "/controller", loadOnStartup = 1)
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private String xmlOutput;
 
 	public Controller() {
+	}
+	
+	@Override
+	public void init() throws ServletException {
+		String xmlSource = getClass().getResource("/products.xml").getPath();
+		String xslSource = getClass().getResource("/products.xsl").getPath();
+		xmlOutput = processXSL(xmlSource, xslSource);
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String xmlSource = getClass().getResource("/products.xml").getPath();
-		String xslSource = getClass().getResource("/products.xsl").getPath();
-		
 		PrintWriter writer = response.getWriter();
-		String xmlOutput = processXSL(xmlSource, xslSource);
 		writer.write(xmlOutput);
 	}
 
