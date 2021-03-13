@@ -18,6 +18,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.mql.java.models.Product;
+
 @WebServlet(urlPatterns =  "/controller", loadOnStartup = 1)
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +37,17 @@ public class Controller extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		if (request.getParameter("id") != null) {
+			Product prod = new Product(0, "test", 1.0F, "test", "test");
+			request.setAttribute("id", prod.getId());
+			request.setAttribute("label", prod.getLabel());
+			request.setAttribute("price", prod.getPrice());
+			request.setAttribute("brand", prod.getBrand());
+			request.setAttribute("image", prod.getImage());
+
+			request.getRequestDispatcher("modify.jsp").forward(request, response);
+		}
+		
 		PrintWriter writer = response.getWriter();
 		writer.write(xmlOutput);
 	}

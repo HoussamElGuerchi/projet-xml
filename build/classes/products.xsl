@@ -66,7 +66,7 @@
 			</head>
 			<body>
 				<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-					<a class="navbar-brand logo" href="#">Lander</a>
+					<a class="navbar-brand logo" href="index.jsp">Lander</a>
 					<button class="navbar-toggler" type="button"
 						data-toggle="collapse" data-target="#navbarNav"
 						aria-controls="navbarNav" aria-expanded="false"
@@ -114,7 +114,13 @@
 										</img>
 										<div class="card-body">
 											<h5 class="card-title">
-												<xsl:value-of select="label" />
+												<a>
+													<xsl:variable name="path" select="'controller?id='"  />
+													<xsl:attribute name="href">
+														<xsl:value-of select="concat($path,@id)" />
+													</xsl:attribute>
+													<xsl:value-of select="label" />
+												</a>
 											</h5>
 											<hr />
 											<h5 class="card-title">
