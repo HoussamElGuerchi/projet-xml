@@ -24,7 +24,7 @@ import org.mql.java.models.Product;
 import org.mql.java.parser.XMLDataLoader;
 import org.mql.java.parser.XMLNode;
 
-@WebServlet(urlPatterns =  "/controller", loadOnStartup = 1)
+@WebServlet(urlPatterns = "/controller", loadOnStartup = 1)
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String xmlOutput;
@@ -39,31 +39,27 @@ public class Controller extends HttpServlet {
 	public void init() throws ServletException {
 //		xmlSource = getClass().getResource("/products.xml").getPath();
 //		String xslSource = getClass().getResource("/products.xsl").getPath();
-		
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String contextPath = getServletContext().getRealPath("/");
 		xmlSource = contextPath + "data/products.xml";
 		String xslSource = contextPath + "data/products.xsl";
 		xmlOutput = processXSL(xmlSource, xslSource);
 		productRoot = new XMLNode(xmlSource);
-	}
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
 		if (request.getParameter("id") != null) {
 			int requestedProductId = Integer.parseInt(request.getParameter("id"));
-			
 			Product product = productRoot.getById(requestedProductId);
 			System.out.println(product.toString());
-			
 			request.setAttribute("id", requestedProductId);
 			request.setAttribute("label", product.getLabel());
 			request.setAttribute("price", product.getPrice());
 			request.setAttribute("brand", product.getBrand());
 			request.setAttribute("image", product.getImage());
-
 			request.getRequestDispatcher("modify.jsp").forward(request, response);
 		}
-		
+
 		PrintWriter writer = response.getWriter();
 		writer.write(xmlOutput);
 	}
@@ -78,20 +74,19 @@ public class Controller extends HttpServlet {
 			String image = request.getParameter("image");
 			Product proudct = new Product(id, label, price, brand, image);
 			productRoot.add(proudct);
-//			response.sendRedirect("controller");
+			// response.sendRedirect("controller");
 		}
-		
+
 		if (request.getParameter("update") != null) {
+			int id = Integer.parseInt(request.getParameter("id"));
 			
 		}
-		
+
 		if (request.getParameter("delete") != null) {
 			int id = Integer.parseInt(request.getParameter("id"));
-			System.out.println("id: "+id);
 			productRoot.delete(id);
 //			response.sendRedirect("controller");
 		}
-		
 
 		doGet(request, response);
 

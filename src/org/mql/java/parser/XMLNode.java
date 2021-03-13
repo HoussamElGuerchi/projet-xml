@@ -74,7 +74,7 @@ public class XMLNode {
 		}
 		return attr.getNodeValue();
 	}
-	
+
 	public String txtValue() {
 		return node.getTextContent();
 	}
@@ -108,31 +108,52 @@ public class XMLNode {
 		NodeList elements = doc.getElementsByTagName("product");
 		for (int i = 0; i < elements.getLength(); i++) {
 			Element product = (Element) elements.item(i);
-			if (product.getAttribute("id").equals(id+"")) {
+			if (product.getAttribute("id").equals(id + "")) {
 				product.getParentNode().removeChild(product);
 			}
 		}
 		DOMHandler.transformXML(doc, source);
 
 	}
-	
+
 	public String getNodeName() {
 		return node.getNodeName();
 	}
-	
+
 	public Product getById(int id) {
 		XMLNode[] products = childrens();
 		for (XMLNode product : products) {
-			if (product.getAttribute("id").equals(id+"")) {
+			if (product.getAttribute("id").equals(id + "")) {
 				String label = product.getChildByTag("label").txtValue();
 				float price = Float.parseFloat(product.getChildByTag("price").txtValue());
 				String brand = product.getChildByTag("brand").txtValue();
 				String image = product.getChildByTag("image").txtValue();
-				
+
 				Product prod2 = new Product(id, label, price, brand, image);
 				return prod2;
 			}
 		}
 		return null;
 	}
+
+	public void updtaeNodeValue(int idProduct, Product product) {
+		NodeEngine engine = new NodeEngine(doc);
+		try {
+			Element xmlNode = engine.genereteXMLNode(product);
+			NodeList products = doc.getElementsByTagName("product");
+			for (int i = 0; i < products.getLength(); i++) {
+				Element productVar = (Element) products.item(i);
+				if (productVar.getAttribute("id").equals(idProduct)) {
+					productVar.getParentNode().replaceChild(xmlNode, productVar);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		DOMHandler.transformXML(doc, source);
+
+	}
+
 }
