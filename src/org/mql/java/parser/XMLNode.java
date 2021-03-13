@@ -136,14 +136,14 @@ public class XMLNode {
 		return null;
 	}
 
-	public void updtaeNodeValue(int idProduct, Product product) {
+	public void updtaeNodeValue(int idProduct, Object product) {
 		NodeEngine engine = new NodeEngine(doc);
 		try {
 			Element xmlNode = engine.genereteXMLNode(product);
 			NodeList products = doc.getElementsByTagName("product");
 			for (int i = 0; i < products.getLength(); i++) {
 				Element productVar = (Element) products.item(i);
-				if (productVar.getAttribute("id").equals(idProduct)) {
+				if (Integer.parseInt(productVar.getAttribute("id")) == idProduct) {
 					productVar.getParentNode().replaceChild(xmlNode, productVar);
 				}
 			}
