@@ -2,6 +2,7 @@ package org.mql.java.parser;
 
 import java.util.Vector;
 
+import org.mql.java.models.Product;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -32,7 +33,6 @@ public class XMLNode {
 		NodeEngine engine = new NodeEngine(doc);
 		try {
 			Element objXML = engine.genereteXMLNode(obj);
-			System.out.println(objXML.getAttribute("id")+"------->");
 			node.appendChild(objXML);
 			System.out.println(source);
 			DOMHandler.transformXML(doc, source);
@@ -60,7 +60,7 @@ public class XMLNode {
 		XMLNode varNode = null;
 		for (int i = 0; i < childrens.length; i++) {
 			varNode = childrens[i];
-			if (varNode.txtValue().equals(tagNode))
+			if (varNode.getNodeName().equals(tagNode))
 				return varNode;
 		}
 		return varNode;
@@ -103,13 +103,13 @@ public class XMLNode {
 		this.doc = doc;
 	}
 
-	public void delete(String reference) {
+	public void delete(int id) {
 
-		NodeList elements = doc.getElementsByTagName("article");
+		NodeList elements = doc.getElementsByTagName("product");
 		for (int i = 0; i < elements.getLength(); i++) {
-			Element article = (Element) elements.item(i);
-			if (article.getElementsByTagName("reference").item(0).getFirstChild().getNodeValue().equals(reference)) {
-				article.getParentNode().removeChild(article);
+			Element product = (Element) elements.item(i);
+			if (product.getAttribute("id").equals(id+"")) {
+				product.getParentNode().removeChild(product);
 			}
 		}
 		DOMHandler.transformXML(doc, source);
@@ -118,5 +118,21 @@ public class XMLNode {
 	
 	public String getNodeName() {
 		return node.getNodeName();
+	}
+	
+	public Product getById(int id) {
+		XMLNode[] products = childrens();
+		for (XMLNode product : products) {
+			if (product.getAttribute("id").equals(id+"")) {
+				String label = product.getChildByTag("label").txtValue();
+				float price = Float.parseFloat(product.getChildByTag("price").txtValue());
+				String brand = product.getChildByTag("brand").txtValue();
+				String image = product.getChildByTag("image").txtValue();
+				
+				Product prod2 = new Product(id, label, price, brand, image);
+				return prod2;
+			}
+		}
+		return null;
 	}
 }

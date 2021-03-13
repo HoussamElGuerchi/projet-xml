@@ -27,8 +27,8 @@
 				<input type="url" class="form-control" placeholder="" name="image" value="<%= request.getAttribute("image") %>">
 			</div>
 			<div class="center">
-				<button class="btn btn-outline-primary" type="submit" name="modifier">Modifier</button>
-				<button type="button" class="btn btn-outline-danger" name="supprimer">Supprimer</button>
+				<button class="btn btn-outline-primary" type="submit" name="modify">Modifier</button>
+				<button type="submit" class="btn btn-outline-danger" name="delete">Supprimer</button>
 			</div>
 		</form>
 	</div>

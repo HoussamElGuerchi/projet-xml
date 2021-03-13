@@ -37,11 +37,14 @@ public class Controller extends HttpServlet {
 
 	@Override
 	public void init() throws ServletException {
-		xmlSource = getClass().getResource("/products.xml").getPath();
-		String xslSource = getClass().getResource("/products.xsl").getPath();
+//		xmlSource = getClass().getResource("/products.xml").getPath();
+//		String xslSource = getClass().getResource("/products.xsl").getPath();
+		
+		String contextPath = getServletContext().getRealPath("/");
+		xmlSource = contextPath + "data/products.xml";
+		String xslSource = contextPath + "data/products.xsl";
 		xmlOutput = processXSL(xmlSource, xslSource);
 		productRoot = new XMLNode(xmlSource);
-		productXMLDAO = new ProductXMLDAO(xmlSource);
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -49,18 +52,17 @@ public class Controller extends HttpServlet {
 		if (request.getParameter("id") != null) {
 			int requestedProductId = Integer.parseInt(request.getParameter("id"));
 			
-			Product prod = new Product(0, "test", 1.0F, "test", "test");
-			request.setAttribute("id", prod.getId());
-			request.setAttribute("label", prod.getLabel());
-			request.setAttribute("price", prod.getPrice());
-			request.setAttribute("brand", prod.getBrand());
-			request.setAttribute("image", prod.getImage());
+			Product product = productRoot.getById(requestedProductId);
+			System.out.println(product.toString());
+			
+			request.setAttribute("id", requestedProductId);
+			request.setAttribute("label", product.getLabel());
+			request.setAttribute("price", product.getPrice());
+			request.setAttribute("brand", product.getBrand());
+			request.setAttribute("image", product.getImage());
 
 			request.getRequestDispatcher("modify.jsp").forward(request, response);
 		}
-		
-		XMLDataLoader<Product> productLoader = new XMLDataLoader<>();
-		Vector<Product> products = productLoader.load(xmlSource, Product.class);
 		
 		PrintWriter writer = response.getWriter();
 		writer.write(xmlOutput);
@@ -76,6 +78,7 @@ public class Controller extends HttpServlet {
 			String image = request.getParameter("image");
 			Product proudct = new Product(id, label, price, brand, image);
 			productRoot.add(proudct);
+//			response.sendRedirect("controller");
 		}
 		
 		if (request.getParameter("update") != null) {
@@ -83,7 +86,10 @@ public class Controller extends HttpServlet {
 		}
 		
 		if (request.getParameter("delete") != null) {
-			
+			int id = Integer.parseInt(request.getParameter("id"));
+			System.out.println("id: "+id);
+			productRoot.delete(id);
+//			response.sendRedirect("controller");
 		}
 		
 
