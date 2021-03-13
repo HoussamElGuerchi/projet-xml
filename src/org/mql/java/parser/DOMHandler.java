@@ -2,7 +2,6 @@ package org.mql.java.parser;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -12,39 +11,32 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 public class DOMHandler {
-	private Document document;
-	private String source;
-	
-	public DOMHandler(String source) {
-		this.source = source;
-	}
-	
-	public Document parse() {
+	public static Document parse(String source) {
+
+		Document doc = null;
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			document = builder.parse(source);
-			return document;
+			doc = builder.parse(source);
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
 		}
+		return doc;
 	}
-	
-	public void transform() {
+
+	public static void transformXML(Document doc, String source) {
+
+		TransformerFactory factory = TransformerFactory.newDefaultInstance();
 		try {
-			TransformerFactory factory = TransformerFactory.newDefaultInstance();
-			Transformer transformer = factory.newTransformer();
-			DOMSource domSource = new DOMSource(document);
-			StreamResult streamResult = new StreamResult(source);
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.transform(domSource, streamResult);
+			Transformer transform = factory.newTransformer();
+			transform.setOutputProperty(OutputKeys.INDENT, "yes");
+			StreamResult result = new StreamResult(source);
+			DOMSource domSource = new DOMSource(doc);
+			transform.transform(domSource, result);
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public Document getDocument() {
-		return document;
 	}
 }
