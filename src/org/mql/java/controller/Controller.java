@@ -19,9 +19,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.mql.java.dao.ProductXMLDAO;
 import org.mql.java.models.Product;
-import org.mql.java.parser.XMLDataLoader;
 import org.mql.java.parser.XMLNode;
 
 @WebServlet(urlPatterns =  "/controller", loadOnStartup = 1)
@@ -30,30 +28,22 @@ public class Controller extends HttpServlet {
 	private String xmlOutput;
 	private String xmlSource;
 	private XMLNode productRoot;
-	private ProductXMLDAO productXMLDAO;
 
 	public Controller() {
 	}
 
-	@Override
-	public void init() throws ServletException {
-//		xmlSource = getClass().getResource("/products.xml").getPath();
-//		String xslSource = getClass().getResource("/products.xsl").getPath();
-		
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String contextPath = getServletContext().getRealPath("/");
 		xmlSource = contextPath + "data/products.xml";
 		String xslSource = contextPath + "data/products.xsl";
 		xmlOutput = processXSL(xmlSource, xslSource);
 		productRoot = new XMLNode(xmlSource);
-	}
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+		
 		if (request.getParameter("id") != null) {
 			int requestedProductId = Integer.parseInt(request.getParameter("id"));
 			
 			Product product = productRoot.getById(requestedProductId);
-			System.out.println(product.toString());
 			
 			request.setAttribute("id", requestedProductId);
 			request.setAttribute("label", product.getLabel());
@@ -78,10 +68,16 @@ public class Controller extends HttpServlet {
 			String image = request.getParameter("image");
 			Product proudct = new Product(id, label, price, brand, image);
 			productRoot.add(proudct);
-//			response.sendRedirect("controller");
 		}
 		
 		if (request.getParameter("update") != null) {
+			int id = Integer.parseInt(request.getParameter("id"));
+			String label = request.getParameter("label");
+			float price = Float.parseFloat(request.getParameter("price"));
+			String brand = request.getParameter("brand");
+			String image = request.getParameter("image");
+			
+			Product product = new Product(id, label, price, brand, image);
 			
 		}
 		
@@ -89,7 +85,7 @@ public class Controller extends HttpServlet {
 			int id = Integer.parseInt(request.getParameter("id"));
 			System.out.println("id: "+id);
 			productRoot.delete(id);
-//			response.sendRedirect("controller");
+			response.sendRedirect("index.jsp");
 		}
 		
 
