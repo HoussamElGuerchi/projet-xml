@@ -16,31 +16,32 @@ public class NodeEngine {
 		this.document = document;
 	}
 	
-	public XMLNode generateXMLNode(Object obj) throws Exception {
+	public Element genereteXMLNode(Object obj) throws Exception {
 		Class<?> cls = obj.getClass();
 		if (!cls.isAnnotationPresent(XMLObject.class)) 
 			throw new Exception("Can not generate xml element from class : "+ cls.getName());
 		else {
 			XMLObject classElement = cls.getAnnotation(XMLObject.class);
-			Element element = document.createElement(classElement.name());
-			
+			Element parentNode = document.createElement(classElement.name());
 			
 			Field[] fields = cls.getDeclaredFields();
 			for (Field field : fields) {
 				field.setAccessible(true);
 				if (field.isAnnotationPresent(Attribute.class)) {
 					Attribute attr = field.getAnnotation(Attribute.class);
-					element.setAttribute(attr.name(), field.get(obj).toString());
+					parentNode.setAttribute(attr.name(), field.get(obj).toString());
 				}
 				if (field.isAnnotationPresent(XmlElement.class)) {
 					XmlElement fieldElement = field.getAnnotation(XmlElement.class);
 					Element child = document.createElement(fieldElement.name());
 					child.appendChild(document.createTextNode(field.get(obj).toString()));
-					element.appendChild(child);
+					parentNode.appendChild(child);
 				}
 				field.setAccessible(false);
 			}
-			return new XMLNode(element);
+//			System.out.println(parentNode.getAttributes().getNamedItem("id")+"---");
+
+			return parentNode;
 		}
 	}
 }

@@ -142,7 +142,7 @@
 							<i class="fab fa-twitter p-3"></i>
 							<i class="fab fa-youtube p-3"></i>
 						</p>
-						<p>© Réalisé par EL GUERCHI Houssam &amp; EL BAGAR Hamza - MQL,
+						<p>© Réalisé par EL GUERCHI Houssam &amp; ELBAGAR Hamza - MQL,
 							FSDM - 2021</p>
 					</div>
 				</section>
