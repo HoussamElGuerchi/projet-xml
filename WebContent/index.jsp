@@ -6,7 +6,15 @@
         <div class="container center">
             <h1 class="mb-4 white">Lander, le leader des montres de luxe</h1>
             <h5 class="mb-4 white">Visitez notre boutique pour découvrir notre collection</h5>
-            <a href="controller" class="btn btn-secondary">Boutique</a>
+<!--             <a href="controller" class="btn btn-secondary">Boutique</a> -->
+            <form method="post" action="controller">
+            	<div class="form-group">
+					<input type="text" class="form-control" placeholder="Chercher une montre" name="label" autocomplete="off">
+				</div>
+				<div class="center">
+					<button class="btn btn-secondary" type="submit" name="search">Chercher</button>
+				</div>
+            </form>
         </div>
     </section>
     

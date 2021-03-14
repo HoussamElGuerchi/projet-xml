@@ -45,7 +45,7 @@ public class Controller extends HttpServlet {
 		String xslSource = contextPath + "data/products.xsl";
 		xmlOutput = processXSL(xmlSource, xslSource);
 		productRoot = new XMLNode(xmlSource);
-		
+
 		if (request.getParameter("id") != null) {
 			int requestedProductId = Integer.parseInt(request.getParameter("id"));
 			Product product = productRoot.getById(requestedProductId);
@@ -72,7 +72,7 @@ public class Controller extends HttpServlet {
 			String image = request.getParameter("image");
 			Product proudct = new Product(id, label, price, brand, image);
 			productRoot.add(proudct);
-			// response.sendRedirect("controller");
+			response.sendRedirect("controller");
 		}
 
 		if (request.getParameter("update") != null) {
@@ -81,19 +81,23 @@ public class Controller extends HttpServlet {
 			float price = Float.parseFloat(request.getParameter("price"));
 			String brand = request.getParameter("brand");
 			String image = request.getParameter("image");
-			
+
 			Product product = new Product(id, label, price, brand, image);
-			
 			productRoot.updtaeNodeValue(id, product);
+			
+			response.sendRedirect("controller");
 		}
 
 		if (request.getParameter("delete") != null) {
 			int id = Integer.parseInt(request.getParameter("id"));
 			productRoot.delete(id);
-			response.sendRedirect("index.jsp");
+			response.sendRedirect("controller");
 		}
 
-		doGet(request, response);
+		if (request.getParameter("search") != null) {
+			String labelSearch = request.getParameter("label");
+
+		}
 
 	}
 
