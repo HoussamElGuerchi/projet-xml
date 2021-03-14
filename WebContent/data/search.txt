@@ -1,0 +1,4 @@
+
+for $product in doc($source)//product
+ where  starts-with($product/label , $search )
+ return $product

@@ -1,10 +1,12 @@
 package org.mql.java.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,11 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.xquery.XQException;
 
+import org.mql.java.busniness.XQuery;
 import org.mql.java.models.Product;
 import org.mql.java.parser.XMLNode;
 
@@ -28,6 +31,7 @@ public class Controller extends HttpServlet {
 	private String xmlOutput;
 	private String xmlSource;
 	private XMLNode productRoot;
+	String contextPath;
 
 	public Controller() {
 	}
@@ -40,7 +44,7 @@ public class Controller extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String contextPath = getServletContext().getRealPath("/");
+		contextPath = getServletContext().getRealPath("/");
 		xmlSource = contextPath + "data/products.xml";
 		String xslSource = contextPath + "data/products.xsl";
 		xmlOutput = processXSL(xmlSource, xslSource);
@@ -84,7 +88,7 @@ public class Controller extends HttpServlet {
 
 			Product product = new Product(id, label, price, brand, image);
 			productRoot.updtaeNodeValue(id, product);
-			
+
 			response.sendRedirect("controller");
 		}
 
@@ -96,6 +100,29 @@ public class Controller extends HttpServlet {
 
 		if (request.getParameter("search") != null) {
 			String labelSearch = request.getParameter("label");
+			String requestXQ = "";
+			PrintWriter writer = new PrintWriter(new FileWriter(contextPath + "data/search.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader(contextPath + "data/search.txt"));
+			StringBuffer txtContent = new StringBuffer();
+			txtContent.append("let $source:=" + xmlSource + "\n");
+			txtContent.append("let $search:=" + labelSearch);
+			String readLine = reader.readLine();
+			System.out.println(readLine + "read line ------------------------>");
+			while (readLine != null) {
+				txtContent.append(readLine);
+				readLine = reader.readLine();
+				System.out.println(readLine + "read line ------------------------>");
+			}
+			System.out.println(txtContent);
+			writer.print(txtContent);
+			writer.close();
+			reader.close();
+
+			try {
+				String resultXQ = XQuery.runQuery(contextPath + "data/search.txt");
+				System.out.println(requestXQ);
+			} catch (XQException e) {
+			}
 
 		}
 
